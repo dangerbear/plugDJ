@@ -1,0 +1,55 @@
+li {
+    padding-bottom: 15px;
+}
+img {
+    display: inline-block;
+    padding-right: 10px;
+}
+.songDetail {
+    display: inline-block;
+    vertical-align: top;
+}
+.songDetail a {
+    display: inline-block;
+}
+.songDetail .songArtist {
+    display: block;
+    font-size: small;
+}
+.songStat {
+    display: inline-block;
+}
+.statCount {
+    display: inline-block;
+    color: white;
+    padding: 2px 12px;
+}
+.songWoot {
+    background-color: green;
+}
+.songGrab {
+    background-color: purple;
+}
+.songMeh {
+    background-color: red;
+}
+span.songPeeps {
+    color: black;
+    background-color: whitesmoke;
+}
+.songDJ {
+    display: inline-block;
+    font-size: small;
+    padding-top: 33px;
+    padding-left: 10px;
+}
+li.played {
+    background-color: cadetblue;
+}
+button {
+    margin: 10px;
+}
+button.pressed {
+    background-color: gray;
+    border: thin solid black;
+}
