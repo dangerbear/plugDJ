@@ -1,6 +1,22 @@
-var fs = require('fs');
-var page = require('webpage').create();
+var fs = require('fs'),
+    system = require('system'),
+    page = require('webpage').create();
 
+if (system.args.length < 3) {
+    console.log('Usage: phantomPlugDJ.js <uid> <pwd> <logConsole>');
+    phantom.exit();
+}
+var logConsole = system.args[3] === "true"; // by default do not output log messages other than the JSON data
+
+if (logConsole) {
+    page.onConsoleMessage = function (msg) {
+        console.log('Page console.log: ' + msg);
+    };
+
+    page.onLoadFinished = function (status) {
+        console.log('Load Finished: ' + status);
+    };
+}
 //page.includeJs('http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js', function() {
 //    // jQuery is loaded, now manipulate the DOM
 //    page.evaluate(function() {
@@ -20,45 +36,67 @@ page.customHeaders = {
 
 page.open('https://plug.dj/mashupfm', function(status) {
     if (status !== 'success') {
-        console.log('Unable to access network');
+        console.error('Unable to access network');
         phantom.exit();
     } else {
 
 //        page.render('example.png');
         // login
-        page.evaluate(function () {
-            $(".existing button:first").click();
-        });
-        page.evaluate(function () {
-            $("#email").val();
-            $("#password").val();
-            $("#submit").click();
-        });
         setTimeout(function() {
+            page.evaluate(function (uid, pwd, logConsole) {
+                if (logConsole) {
+                    console.log("Connecting as " + uid + "/" + pwd);
+                }
+                $(".existing button:first").click();
+                $("#email").attr("value", uid);
+                $("#password").attr("value", pwd);
+                $("#submit").click();
+            }, system.args[1], system.args[2], logConsole);
+        }, 1000);
+
+        setTimeout(function() {
+//            page.render('loggedIn.png');
             //var content = page.evaluate(function () {
             //    return JSON.stringify(API.getHistory());
             //});
             //fs.write("history.txt", content, 'w');
 
 //            page.render('page.png');
-            page.includeJs('http://dangerbear.com/processHistory.js', function() {
-                var html = page.evaluate(function() {
-                    var historyData = API.getHistory();
-                    var soundCloundList = processHistory(historyData, 2)[0].outerHTML;
-                    var youTubeList = processHistory(historyData, 1, "display: none")[0].outerHTML;
-                    return soundCloundList + youTubeList;
-                });
-                var retVal = "<html><header><link rel='stylesheet' type='text/css' href='list.css'/>" +
-                    "<script src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>" +
-                    "<script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js'></script>" +
-                    "<script src='/plugdj.js'></script></header><body>" +
-                    "<div><button id='scBtn' class='pressed'>SoundCloud</button><button id='ytBtn'>YouTube</button><button id='refreshList'>Refresh</button></div>" +
-                    html + "</body></html>";
-                fs.write("history.html", retVal, 'w');
-//                console.log(retVal);
-                phantom.exit();
+//            page.includeJs('http://dangerbear.com/processHistory.js', function() {
+//                var html = page.evaluate(function() {
+//                    var historyData = API.getHistory();
+//                    var soundCloundList = processHistory(historyData, 2)[0].outerHTML;
+//                    var youTubeList = processHistory(historyData, 1, "display: none")[0].outerHTML;
+//                    return soundCloundList + youTubeList;
+//                });
+//                var retVal = "<html><header><link rel='stylesheet' type='text/css' href='list.css'/>" +
+//                    "<script src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>" +
+//                    "<script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js'></script>" +
+//                    "<script src='/plugdj.js'></script></header><body>" +
+//                    "<div><button id='scBtn' class='pressed'>SoundCloud</button><button id='ytBtn'>YouTube</button><button id='refreshList'>Refresh</button></div>" +
+//                    html + "</body></html>";
+//                fs.write("history.html", retVal, 'w');
+////                console.log(retVal);
+//                phantom.exit();
+//            });
+//            page.evaluate(function () {
+//                "use strict";
+//                var historyData = API.getHistory();
+//                $.ajax('http://dangerbear.com/plugdjData', {
+//                    type: 'POST',
+//                    data: JSON.stringify({ test: "sads" }),
+//                    contentType: 'text/json',
+//                    success: function() { phantom.exit(); }
+//                });
+//            });
+
+            var historyData = page.evaluate(function() {
+                return API.getHistory();
             });
-        }, 4000);
+            console.log(JSON.stringify(historyData));
+            fs.write("history.json", JSON.stringify(historyData), 'w');
+            phantom.exit();
+        }, 7000);
     }
 });
 

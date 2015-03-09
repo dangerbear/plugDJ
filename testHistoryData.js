@@ -42,3 +42,10 @@ var testHistoryData = [
             "image":"//i.ytimg.com/vi/GGJYW6K9vEU/default.jpg",
             "title":"Beast Break (DOSVEC DubStep Mashup)"},
         "score":{"grabs":0,"listeners":8,"negative":0,"positive":2,"skipped":0}}];
+
+module.exports = {
+    getData: function() {
+        "use strict";
+        return testHistoryData;
+    }
+};
