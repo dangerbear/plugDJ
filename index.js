@@ -52,17 +52,22 @@ var routeIndex = function(res) {
         }
     },
     writeResource = function(filename, res) {
-        var ext = filename.split(".")[1].split("?")[0];
-        var filePath = path.join(__dirname, getFilePath(ext), filename);
-        console.log("  WRITING: " + filePath);
-        var stat = fs.statSync(filePath);
+        try {
+            var ext = filename.split(".")[1].split("?")[0];
+            var filePath = path.join(__dirname, getFilePath(ext), filename);
+            console.log("  WRITING: " + filePath);
+            var stat = fs.statSync(filePath);
 
-        res.writeHead(200, {
-            'Content-Type': getMimeType(ext),
-            'Content-Length': stat.size
-        });
+            res.writeHead(200, {
+                'Content-Type': getMimeType(ext),
+                'Content-Length': stat.size
+            });
 
-        fs.createReadStream(filePath).pipe(res);
+            fs.createReadStream(filePath).pipe(res);
+        } catch (e) {
+            console.log("  WRITING_FAILED: " + e);
+            res.end();
+        }
     },
     whitelistResource = function(filename, ext, whitelist, res) {
         for (var i = 0; i < whitelist.length; i++) {
@@ -156,6 +161,9 @@ http.createServer(function (req, res) {
             phantom.getCurrentMediaData(res);
         } else if (req.url.split("?")[0] === "/plugdjJSONAll") {
             phantom.getHistoryMediaData(res);
+        } else if (req.url.split("?")[0] === "/resetPhantom") {
+            phantom.disconnect();
+            res.end("Done!");
         } else if (!routeResource(req, res)) {
             routeIndex(res);
         }
