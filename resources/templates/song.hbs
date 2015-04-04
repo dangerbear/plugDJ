@@ -1,0 +1,16 @@
+<li>
+    <img class="extra" src="{{media.image}}"/>
+    <div class="songDetail">
+        <a href="#" target="_blank" data-format="{{media.format}}" data-cid="{{media.cid}}" data-duration="{{media.duration}}">{{{media.title}}}</a>
+        <span class="songArtist">[<span class="songDuration">{{media.duration}}:{{media.formatType}}</span>]  {{{media.author}}}</span>
+        {{#if user}}
+            <div class="extra">
+                <span class="songWoot statCount">{{score.positive}}</span>
+                <span class="songGrab statCount">{{score.grabs}}</span>
+                <span class="songMeh statCount">{{score.negative}}</span>
+                <span class="songPeeps statCount">{{score.listeners}}</span>
+                <span class="songDJ">{{user.username}}</span>
+            </div>
+        {{/if}}
+    </div>
+</li>

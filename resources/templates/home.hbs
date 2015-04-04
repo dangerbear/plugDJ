@@ -1,0 +1,17 @@
+<!DOCTYPE HTML><html lang="en-US">
+    <head>
+        {{#each css}}
+            <link rel='stylesheet' type='text/css' href='{{this}}.css'/>
+        {{/each}}
+        {{#each js}}
+            <script src='{{this}}.js'></script>
+        {{/each}}
+        <script src='//www.youtube.com/iframe_api'></script>
+    </head>
+    <body>
+        <div><button id='refreshList'>Refresh</button><span id="ts"></span></div>
+        <div id="player"></div>
+        <div id="currentSong"></div>
+        <div id="songHistory"><ol></ol></div>
+    </body>
+</html>

@@ -1,15 +1,18 @@
 var http = require('http'),
     fs = require('fs'),
     path = require('path'),
+    phantom = require('./resources/js/phantom'),
     childProcess = require("child_process"),
-    processHistory = require("./resources/js/processHistoryNoJQuery");
+    processHistory = require("./resources/js/processHistoryNoJQuery"),
+    homePage = require("./resources/js/homePage");
+//    testHistoryData = require("./testHistoryData");
 
 var VALID_TXT_RESOURCES = ["robots"];
 
 console.log("arg length = " + process.argv.length);
 if (process.argv.length !== 4) {
     console.log('Usage: index.js <uid> <pwd>');
-    return
+    throw "Invalid arguments!";
 }
 
 var routeIndex = function(res) {
@@ -24,6 +27,8 @@ var routeIndex = function(res) {
                 return "/resources/css";
             case "jpg":
                 return "/resources/images";
+            case "hbs":
+                return "/resources/templates";
             default:
                 return "";
         }
@@ -40,6 +45,8 @@ var routeIndex = function(res) {
                 return "image/x-icon";
             case "jpg":
                 return "image/jpeg";
+            case "hbs":
+                return "text/x-handlebars-template";
             default:
                 return "text/plain";
         }
@@ -69,7 +76,12 @@ var routeIndex = function(res) {
     routeResource = function(req, res) {
         if (req.url.indexOf(".txt") > -1) {
             return whitelistResource(req.url, "txt", VALID_TXT_RESOURCES, res);
-        } else if (req.url.indexOf(".js") > -1 || req.url.indexOf(".css") > -1 || req.url.indexOf(".html") > -1 || req.url.indexOf(".ico") > -1 || req.url.indexOf(".jpg") > -1) {
+        } else if (req.url.indexOf(".js") > -1
+            || req.url.indexOf(".css") > -1
+            || req.url.indexOf(".html") > -1
+            || req.url.indexOf(".ico") > -1
+            || req.url.indexOf(".jpg") > -1
+            || req.url.indexOf(".hbs") > -1) {
             writeResource(req.url, res);
             return true;
         }
@@ -138,11 +150,16 @@ http.createServer(function (req, res) {
         });
     } else {
         if (req.url.split("?")[0] === "/plugdj") {
-            routePlugdj(res);
+            phantom.openPlugDJ(process.argv[2], process.argv[3]);
+            homePage.build(res);
+        } else if (req.url.split("?")[0] === "/plugdjJSON") {
+            phantom.getCurrentMediaData(res);
+        } else if (req.url.split("?")[0] === "/plugdjJSONAll") {
+            phantom.getHistoryMediaData(res);
         } else if (!routeResource(req, res)) {
             routeIndex(res);
         }
     }
 
-}).listen(80, '192.210.192.244');
+}).listen(80, '192.168.1.19');
 console.log('Server running at http://dangerbear.com/');

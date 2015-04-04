@@ -53,3 +53,10 @@ button.pressed {
     background-color: gray;
     border: thin solid black;
 }
+#currentSong {
+    border: dotted yellow 2px;
+    height: 18px;
+}
+#currentSong .extra {
+    display: none;
+}

@@ -55,6 +55,10 @@ page.open('https://plug.dj/mashupfm', function(status) {
         }, 1000);
 
         setTimeout(function() {
+            page.evaluate(function () {
+                $("body").empty();
+            });
+
 //            page.render('loggedIn.png');
             //var content = page.evaluate(function () {
             //    return JSON.stringify(API.getHistory());
@@ -96,7 +100,7 @@ page.open('https://plug.dj/mashupfm', function(status) {
             console.log(JSON.stringify(historyData));
             fs.write("history.json", JSON.stringify(historyData), 'w');
             phantom.exit();
-        }, 7000);
+        }, 6000);
     }
 });
 
